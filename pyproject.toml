@@ -35,5 +35,9 @@ select = [
     "SIM",   # flake8-simplify
 ]
 
+[tool.setuptools]
+packages = ["extraction", "navigation", "storage"]
+py-modules = ["config", "models", "validator"]
+
 [tool.ruff.format]
 quote-style = "double"
