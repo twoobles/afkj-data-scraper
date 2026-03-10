@@ -5,25 +5,10 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
+from config import DB_SCHEMA
 from models import ScanResult
 
 logger = logging.getLogger(__name__)
-
-SCHEMA = """\
-CREATE TABLE IF NOT EXISTS scans (
-    player_name TEXT NOT NULL,
-    guild       TEXT NOT NULL,
-    scan_date   DATE NOT NULL,
-    afk_rank    INTEGER,
-    afk_stage   TEXT,
-    dr_rank     INTEGER,
-    dr_score    TEXT,
-    sa_rank     INTEGER,
-    al_rank     INTEGER,
-    hd_rank     INTEGER,
-    PRIMARY KEY (player_name, guild, scan_date)
-);
-"""
 
 
 class Database:
@@ -36,7 +21,7 @@ class Database:
         self._init_schema()
 
     def _init_schema(self) -> None:
-        self.conn.execute(SCHEMA)
+        self.conn.execute(DB_SCHEMA)
         self.conn.commit()
 
     def has_data_for_date(self, scan_date: date) -> bool:

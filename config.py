@@ -1,5 +1,6 @@
 """Configuration constants for AFK Journey Data Scraper."""
 
+import re
 from pathlib import Path
 
 # Paths
@@ -26,6 +27,10 @@ SCROLL_SIMILARITY_THRESHOLD = 0.99
 # Navigation — wait time after clicking a UI element (seconds)
 NAV_CLICK_DELAY_SEC = 1.0
 
+# Validation patterns
+SCORE_PATTERN = re.compile(r"^\d+(\.\d+)?[KMB]$", re.IGNORECASE)
+STAGE_PATTERN = re.compile(r"^A?\d+$", re.IGNORECASE)
+
 # OCR
 OCR_LANGUAGES = ["en", "ch_sim"]
 
@@ -43,6 +48,23 @@ GAME_MODES = [
     "arcane_labyrinth",
     "honor_duel",
 ]
+
+# DB schema
+DB_SCHEMA = """\
+CREATE TABLE IF NOT EXISTS scans (
+    player_name TEXT NOT NULL,
+    guild       TEXT NOT NULL,
+    scan_date   DATE NOT NULL,
+    afk_rank    INTEGER,
+    afk_stage   TEXT,
+    dr_rank     INTEGER,
+    dr_score    TEXT,
+    sa_rank     INTEGER,
+    al_rank     INTEGER,
+    hd_rank     INTEGER,
+    PRIMARY KEY (player_name, guild, scan_date)
+);
+"""
 
 # DB column mapping per mode — maps mode name to its (rank_col, extra_cols) in the scans table
 MODE_COLUMNS: dict[str, tuple[str, list[str]]] = {

@@ -1,17 +1,11 @@
 """Validation for extracted player records before DB commit."""
 
 import logging
-import re
 
+from config import SCORE_PATTERN, STAGE_PATTERN
 from models import PlayerRecord
 
 logger = logging.getLogger(__name__)
-
-# Score suffixes: K (thousands), M (millions), B (billions)
-SCORE_PATTERN = re.compile(r"^\d+(\.\d+)?[KMB]$", re.IGNORECASE)
-
-# Stage: plain number like "1452" or Apex like "A252"
-STAGE_PATTERN = re.compile(r"^A?\d+$", re.IGNORECASE)
 
 
 def validate_score(score: str) -> bool:
