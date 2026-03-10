@@ -1,21 +1,38 @@
 """Screen capture utilities for the game window."""
 
 import logging
+from time import sleep
 
+import cv2
 import numpy as np
-from PIL import Image  # noqa: F401
+import pygetwindow as gw
+from PIL import ImageGrab
 
-from config import DEBUG_DIR, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH  # noqa: F401
+from config import (
+    DEBUG_DIR,
+    GAME_WINDOW_HEIGHT,
+    GAME_WINDOW_TITLE,
+    GAME_WINDOW_WIDTH,
+    SCROLL_SIMILARITY_THRESHOLD,
+)
 
 logger = logging.getLogger(__name__)
-
 
 def find_game_window() -> tuple[int, int, int, int] | None:
     """Locate the game window and return its bounding box (left, top, width, height).
 
     Returns None if the window is not found.
     """
-    raise NotImplementedError
+    windows = gw.getWindowsWithTitle(GAME_WINDOW_TITLE)
+    if not windows:
+        return None
+    window = next((w for w in windows if w.title == GAME_WINDOW_TITLE), None)
+    if not window:
+        return None
+
+    sleep(1)
+
+    return (window.left, window.top, window.width, window.height)
 
 
 def verify_window_size(region: tuple[int, int, int, int]) -> bool:
@@ -27,7 +44,8 @@ def verify_window_size(region: tuple[int, int, int, int]) -> bool:
     Returns:
         True if width and height match GAME_WINDOW_WIDTH/HEIGHT.
     """
-    raise NotImplementedError
+    window_width, window_height = region[2], region[3]
+    return (window_width == GAME_WINDOW_WIDTH) and (window_height == GAME_WINDOW_HEIGHT)
 
 
 def capture_region(region: tuple[int, int, int, int]) -> np.ndarray:
@@ -39,7 +57,10 @@ def capture_region(region: tuple[int, int, int, int]) -> np.ndarray:
     Returns:
         Screenshot as a numpy array (BGR, OpenCV format).
     """
-    raise NotImplementedError
+    left, top, width, height = region
+    bbox = (left, top, left + width, top + height)
+    screenshot = ImageGrab.grab(bbox=bbox)
+    return cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
 
 
 def screenshots_match(img_a: np.ndarray, img_b: np.ndarray) -> bool:
@@ -54,7 +75,8 @@ def screenshots_match(img_a: np.ndarray, img_b: np.ndarray) -> bool:
     Returns:
         True if images are similar enough to indicate no new content.
     """
-    raise NotImplementedError
+    similarity = np.count_nonzero(img_a == img_b) / img_a.size
+    return similarity >= SCROLL_SIMILARITY_THRESHOLD
 
 
 def save_debug_screenshot(image: np.ndarray, label: str) -> None:
@@ -66,4 +88,6 @@ def save_debug_screenshot(image: np.ndarray, label: str) -> None:
         image: Screenshot as BGR numpy array.
         label: Descriptive label used in the filename.
     """
-    raise NotImplementedError
+    DEBUG_DIR.mkdir(exist_ok=True)
+    filepath = str(DEBUG_DIR / f"{label}.png")
+    cv2.imwrite(filepath, image)

@@ -10,9 +10,11 @@ DEBUG_DIR = BASE_DIR / "debug"
 TEST_DATA_DIR = BASE_DIR / "test_data"
 DB_PATH = BASE_DIR / "scans.db"
 
-# Game window — expected resolution in windowed mode
-GAME_WINDOW_WIDTH = 1920
-GAME_WINDOW_HEIGHT = 1080
+# Game window
+GAME_WINDOW_TITLE = "AFK Journey: Homestead"
+# Expected resolution in windowed mode
+GAME_WINDOW_WIDTH = 1295
+GAME_WINDOW_HEIGHT = 757
 
 # Template matching
 TEMPLATE_CONFIDENCE_THRESHOLD = 0.8
