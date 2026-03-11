@@ -16,8 +16,8 @@ class TestValidateScore:
     def test_valid_thousands(self):
         assert validate_score("50K") is True
 
-    def test_valid_decimal(self):
-        assert validate_score("1.5B") is True
+    def test_valid_trillions(self):
+        assert validate_score("5T") is True
 
     def test_valid_lowercase(self):
         assert validate_score("100m") is True
@@ -25,8 +25,8 @@ class TestValidateScore:
     def test_invalid_no_suffix(self):
         assert validate_score("169") is False
 
-    def test_invalid_wrong_suffix(self):
-        assert validate_score("169T") is False
+    def test_invalid_decimal(self):
+        assert validate_score("1.5B") is False
 
     def test_invalid_text(self):
         assert validate_score("abc") is False

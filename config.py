@@ -10,9 +10,11 @@ DEBUG_DIR = BASE_DIR / "debug"
 TEST_DATA_DIR = BASE_DIR / "test_data"
 DB_PATH = BASE_DIR / "scans.db"
 
-# Game window — expected resolution in windowed mode
-GAME_WINDOW_WIDTH = 1920
-GAME_WINDOW_HEIGHT = 1080
+# Game window
+GAME_WINDOW_TITLE = "AFK Journey: Homestead"
+# Expected resolution in windowed mode
+GAME_WINDOW_WIDTH = 1295
+GAME_WINDOW_HEIGHT = 757
 
 # Template matching
 TEMPLATE_CONFIDENCE_THRESHOLD = 0.8
@@ -28,11 +30,13 @@ SCROLL_SIMILARITY_THRESHOLD = 0.99
 NAV_CLICK_DELAY_SEC = 1.0
 
 # Validation patterns
-SCORE_PATTERN = re.compile(r"^\d+(\.\d+)?[KMB]$", re.IGNORECASE)
-STAGE_PATTERN = re.compile(r"^A?\d+$", re.IGNORECASE)
+SCORE_PATTERN = re.compile(r"^\d+[KMBT]$", re.IGNORECASE)
+STAGE_PATTERN = re.compile(r"^(A(pex)?\s*)?\d+$", re.IGNORECASE)
+STAGE_PREFIX = "A"
 
 # OCR
 OCR_LANGUAGES = ["en", "ch_sim"]
+OCR_CONFIDENCE_THRESHOLD = 0.3
 
 # Google Sheets (actual values loaded from .env at runtime)
 SHEETS_SCOPES = [
