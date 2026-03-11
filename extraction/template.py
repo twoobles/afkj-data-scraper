@@ -2,6 +2,7 @@
 
 import logging
 
+import cv2  # noqa: F401
 import numpy as np
 
 from config import TEMPLATE_CONFIDENCE_THRESHOLD, TEMPLATES_DIR  # noqa: F401
@@ -21,7 +22,10 @@ def load_template(template_name: str) -> np.ndarray:
     Raises:
         FileNotFoundError: If the template file does not exist.
     """
-    raise NotImplementedError
+    path = TEMPLATES_DIR / template_name
+    if not path.exists():
+        raise FileNotFoundError(f"Template not found: {path}")
+    return cv2.imread(str(path))
 
 
 def find_template(
@@ -39,7 +43,15 @@ def find_template(
     Returns:
         Center (x, y) of the best match, or None if confidence is below threshold.
     """
-    raise NotImplementedError
+    match = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
+    _, max_val, _, max_loc = cv2.minMaxLoc(match)
+
+    if max_val < threshold:
+        return None
+    template_height, template_width = template.shape[:2]
+    center_x = max_loc[0] + template_width // 2
+    center_y = max_loc[1] + template_height // 2
+    return (center_x, center_y)
 
 
 def find_all_templates(
@@ -59,4 +71,22 @@ def find_all_templates(
     Returns:
         List of center (x, y) positions for each match, sorted top-to-bottom.
     """
-    raise NotImplementedError
+    match = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
+    locations = np.where(match >= threshold)
+
+    def _too_close(point, accepted, template_width, template_height):
+        for a in accepted:
+            if abs(point[0] - a[0]) < template_width and abs(point[1] - a[1]) < template_height:
+                return True
+        return False
+
+    accepted, centers = [], []
+    template_height, template_width = template.shape[:2]
+    for point in zip(*locations[::-1], strict=True):
+        if not _too_close(point, accepted, template_width, template_height):
+            accepted.append(point)
+            center_x = point[0] + template_width // 2
+            center_y = point[1] + template_height // 2
+            centers.append((center_x, center_y))
+
+    return sorted(centers, key=lambda c: c[1])
