@@ -6,7 +6,6 @@ import numpy as np
 import pytest
 
 from config import (
-    DEBUG_DIR,
     GAME_WINDOW_HEIGHT,
     GAME_WINDOW_WIDTH,
     SCROLL_SIMILARITY_THRESHOLD,
@@ -18,7 +17,6 @@ from extraction.screenshot import (
     screenshots_match,
     verify_window_size,
 )
-
 
 # ---------------------------------------------------------------------------
 # find_game_window
@@ -141,7 +139,7 @@ def test_screenshots_match_identical():
     except NotImplementedError:
         pytest.skip("screenshots_match not yet implemented")
 
-    assert result == True
+    assert result == True  # noqa: E712 — numpy bool
 
 
 def test_screenshots_match_completely_different():
@@ -153,7 +151,7 @@ def test_screenshots_match_completely_different():
     except NotImplementedError:
         pytest.skip("screenshots_match not yet implemented")
 
-    assert result == False
+    assert result == False  # noqa: E712 — numpy bool
 
 
 def test_screenshots_match_near_threshold():
@@ -162,13 +160,13 @@ def test_screenshots_match_near_threshold():
     # Flip a tiny fraction of pixels — well under the (1 - threshold) tolerance
     changed = img.copy()
     num_changed = max(1, int(100 * 100 * (1 - SCROLL_SIMILARITY_THRESHOLD) * 0.5))
-    changed.flat[:num_changed * 3] = 0
+    changed.flat[: num_changed * 3] = 0
     try:
         result = screenshots_match(img, changed)
     except NotImplementedError:
         pytest.skip("screenshots_match not yet implemented")
 
-    assert result == True
+    assert result == True  # noqa: E712 — numpy bool
 
 
 # ---------------------------------------------------------------------------
