@@ -53,10 +53,7 @@ class BaseMode(ABC):
             return None
 
         return PlayerRecord(
-            player_name = name_and_guild[0],
-            guild = name_and_guild[1],
-            rank = rank,
-            extra=extra
+            player_name=name_and_guild[0], guild=name_and_guild[1], rank=rank, extra=extra
         )
 
     def parse_extra(self, text: str) -> str | None:

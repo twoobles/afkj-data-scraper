@@ -18,6 +18,7 @@ from config import (
 
 logger = logging.getLogger(__name__)
 
+
 def find_game_window() -> tuple[int, int, int, int] | None:
     """Locate the game window and return its bounding box (left, top, width, height).
 
