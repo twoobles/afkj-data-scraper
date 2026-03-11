@@ -30,7 +30,7 @@ SCROLL_SIMILARITY_THRESHOLD = 0.99
 NAV_CLICK_DELAY_SEC = 1.0
 
 # Validation patterns
-SCORE_PATTERN = re.compile(r"^\d+(\.\d+)?[KMB]$", re.IGNORECASE)
+SCORE_PATTERN = re.compile(r"^\d+(\.\d+)?[KMBT]$", re.IGNORECASE)
 STAGE_PATTERN = re.compile(r"^A?\d+$", re.IGNORECASE)
 
 # OCR

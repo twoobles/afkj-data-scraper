@@ -1,8 +1,14 @@
 """Screen navigator — clicks through UI using template matching."""
 
 import logging
+from time import sleep
 
-from navigation.paths import NAV_BACK_PATH, NAV_PATHS, NavStep  # noqa: F401
+import pyautogui
+
+from config import NAV_CLICK_DELAY_SEC, SCROLL_CLICKS, SCROLL_PAUSE_SEC
+from extraction.screenshot import capture_region
+from extraction.template import find_template, load_template
+from navigation.paths import NAV_BACK_PATH, NAV_PATHS, NavStep
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +29,14 @@ def navigate_to_mode(
     Returns:
         True if navigation succeeded, False if any step failed.
     """
-    raise NotImplementedError
+    if mode not in NAV_PATHS:
+        return False
+
+    steps = NAV_PATHS[mode]
+    if not steps:
+        return False
+
+    return all(_execute_step(step, game_region) for step in steps)
 
 
 def navigate_back(game_region: tuple[int, int, int, int]) -> bool:
@@ -35,7 +48,10 @@ def navigate_back(game_region: tuple[int, int, int, int]) -> bool:
     Returns:
         True if navigation succeeded, False if any step failed.
     """
-    raise NotImplementedError
+    if not NAV_BACK_PATH:
+        return False
+
+    return all(_execute_step(step, game_region) for step in NAV_BACK_PATH)
 
 
 def _execute_step(
@@ -51,7 +67,15 @@ def _execute_step(
     Returns:
         True if the template was found and clicked.
     """
-    raise NotImplementedError
+    screenshot = capture_region(game_region)
+    template = load_template(step.template_name)
+    match = find_template(screenshot, template)
+    if match is None:
+        return False
+
+    pyautogui.click(game_region[0] + match[0], game_region[1] + match[1])
+    sleep(NAV_CLICK_DELAY_SEC)
+    return True
 
 
 def scroll_ranking_list(game_region: tuple[int, int, int, int]) -> None:
@@ -62,4 +86,8 @@ def scroll_ranking_list(game_region: tuple[int, int, int, int]) -> None:
     Args:
         game_region: Bounding box of the game window (for mouse positioning).
     """
-    raise NotImplementedError
+    center_x = game_region[0] + game_region[2] // 2
+    center_y = game_region[1] + game_region[3] // 2
+    pyautogui.moveTo(center_x, center_y)
+    pyautogui.scroll(SCROLL_CLICKS)
+    sleep(SCROLL_PAUSE_SEC)
